@@ -74,7 +74,11 @@ export const Navbar = () => {
           </Link>
         </li>
         <li>
-          <Link className="btn white-text" to="/" onClick={logoutHandler}>
+          <Link
+            className="waves-effect waves-light btn white-text"
+            to="/"
+            onClick={logoutHandler}
+          >
             Выйти
           </Link>
         </li>
@@ -82,7 +86,7 @@ export const Navbar = () => {
       <nav className="blue darken-1">
         <button
           data-target="slide-out"
-          className="sidenav-trigger btn blue darken-4"
+          className="waves-effect waves-light sidenav-trigger btn blue darken-4"
         >
           <i className="material-icons">menu</i>
         </button>

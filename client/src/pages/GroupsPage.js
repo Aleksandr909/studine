@@ -1,34 +1,15 @@
-import React, { useState } from "react";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { groupsNamesHandler, deleteRow, addRow } from "../store/actions/groups";
+import { groupSave } from "../store/actions/localStorage";
 
 export const GroupsPage = () => {
-  const [groups, setGroups] = useState([]);
+  let groups = useSelector(state => state.app.groups);
+  const dispatch = useDispatch();
 
-  const groupsNamesHandler = event => {
-    let newGroupsArr = [...groups];
-    const [name, num] = event.target["name"].split(" ");
-    let selectedInputInState = newGroupsArr[num];
-    let newData = { "": "" };
-    if (name === "Name") {
-      newData = {
-        [event.target.value]: Object.values(selectedInputInState)[0]
-      };
-    } else if (name === "Date") {
-      newData = {
-        [Object.keys(selectedInputInState)[0]]: event.target.value
-      };
-    }
-    newGroupsArr[num] = newData;
-
-    setGroups(newGroupsArr);
-  };
-  const deleteRow = index => {
-    const newGroupsArr = [...groups];
-    newGroupsArr.splice(index, 1);
-    setGroups(newGroupsArr);
-  };
   return (
     <div>
-      <p>Группы</p>
+      <h6>Список групп, обучаемых в учебном заведении.</h6>
       <table>
         <thead>
           <tr>
@@ -45,39 +26,50 @@ export const GroupsPage = () => {
               <td>
                 <input
                   type="text"
-                  name={`Name ${index}`}
-                  value={Object.keys(elem)[0]}
-                  onChange={event => groupsNamesHandler(event)}
+                  name="Name"
+                  value={elem.name}
+                  onChange={event =>
+                    dispatch(groupsNamesHandler(event, index, groups))
+                  }
                 ></input>
               </td>
               <td>
                 <input
                   type="date"
-                  name={`Date ${index}`}
-                  value={Object.values(elem)[0]}
-                  onChange={event => groupsNamesHandler(event)}
+                  name="Date"
+                  value={elem.date}
+                  onChange={event =>
+                    dispatch(groupsNamesHandler(event, index, groups))
+                  }
                 ></input>
               </td>
-              <td onClick={() => deleteRow(index)}>-</td>
+              <td
+                className="btn-floating btn-small waves-effect waves-light red center"
+                style={{ marginTop: 20 }}
+                onClick={() => dispatch(deleteRow(index, groups))}
+              >
+                <i className="material-icons">remove</i>
+              </td>
             </tr>
           ))}
         </tbody>
       </table>
       <button
-        onClick={() => setGroups([...groups, { "": "" }])}
-        className="btn"
+        onClick={() => dispatch(addRow(groups))}
+        className="waves-effect waves-light btn"
+        style={{ marginRight: 10 }}
         id="new_line"
         name="button"
       >
-        +
+        <i className="material-icons">add</i>
       </button>
       <button
-        onClick={() => console.log([groups])}
-        className="btn"
+        onClick={() => dispatch(groupSave(groups))}
+        className="waves-effect waves-light btn"
         id="add"
         name="button"
       >
-        Сохранить
+        Сохранить <i className="material-icons">cloud_download</i>
       </button>
     </div>
   );
