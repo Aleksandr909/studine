@@ -74,6 +74,21 @@ export const Navbar = () => {
           </Link>
         </li>
         <li>
+          <Link to="/teachers" className="white-text active">
+            Преподаватели
+          </Link>
+        </li>
+        <li>
+          <Link to="/classrooms" className="white-text active">
+            Аудитории
+          </Link>
+        </li>
+        <li>
+          <Link to="/changes" className="white-text active">
+            Изменения
+          </Link>
+        </li>
+        <li>
           <Link
             className="waves-effect waves-light btn white-text"
             to="/"
@@ -83,14 +98,16 @@ export const Navbar = () => {
           </Link>
         </li>
       </ul>
-      <nav className="blue darken-1">
-        <button
-          data-target="slide-out"
-          className="waves-effect waves-light sidenav-trigger btn blue darken-4"
-        >
-          <i className="material-icons">menu</i>
-        </button>
-      </nav>
+      <div className="navbar-fixed">
+        <nav className="blue darken-1">
+          <button
+            data-target="slide-out"
+            className="waves-effect waves-light sidenav-trigger btn blue darken-4"
+          >
+            <i className="material-icons">menu</i>
+          </button>
+        </nav>
+      </div>
     </div>
   );
 };

@@ -8,6 +8,10 @@ import { CalendarPage } from "./pages/CalendarPage";
 import { DisciplinesPage } from "./pages/DisciplinesPage";
 import { ImportantPage } from "./pages/ImportantPage";
 import { TimetablePage } from "./pages/TimetablePage";
+import TeachersPage from "./pages/TeachersPage";
+import { ClassroomsPage } from "./pages/ClassroomsPage";
+import ChangesPage from "./pages/ChangesPage";
+import { ClassroomsAllPage } from "./pages/ClassroomsAllPage";
 
 export const useRoutes = isAuthenticated => {
   if (isAuthenticated) {
@@ -33,6 +37,18 @@ export const useRoutes = isAuthenticated => {
         </Route>
         <Route path="/calendar" exact>
           <CalendarPage />
+        </Route>
+        <Route path="/teachers" exact>
+          <TeachersPage />
+        </Route>
+        <Route path="/classrooms" exact>
+          <ClassroomsPage />
+        </Route>
+        <Route path="/classrooms/all" exact>
+          <ClassroomsAllPage />
+        </Route>
+        <Route path="/changes" exact>
+          <ChangesPage />
         </Route>
         <Redirect to="/home" />
       </Switch>

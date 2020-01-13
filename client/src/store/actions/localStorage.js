@@ -1,49 +1,109 @@
-import {
-  GROUPS_SAVED,
-  LOCAL_STORE_INIT,
-  GROUPS_CHANGES_SAVED,
-  LOCAL_STORE_CHANGES_INIT
-} from "../types";
+import { GROUPS_SAVED, LOCAL_STORE_INIT, CLASSROOMS_SAVED } from "../types";
 
 export const localStoreInit = () => {
   return async dispatch => {
-    let localStorageData = {};
-    let localStorageChangesData = {};
+    let localStorageGroups = {};
+    let localStorageChanges = {};
+    let localStorageDisciplines = {};
+    let localStorageClassrooms = [];
     try {
-      localStorageData = await JSON.parse(localStorage.getItem("groupsSaved"));
-      localStorageChangesData = await JSON.parse(
-        localStorage.getItem("groupsChangesSaved")
+      localStorageGroups = await JSON.parse(
+        localStorage.getItem("groupsSaved")
       );
-      if (localStorageData !== null) {
-        dispatch({
-          type: LOCAL_STORE_INIT,
-          payload: localStorageData
-        });
-      } else {
-        dispatch({
-          type: LOCAL_STORE_INIT,
-          payload: [
+      localStorageChanges = await JSON.parse(
+        localStorage.getItem("changesSaved")
+      );
+      localStorageDisciplines = await JSON.parse(
+        localStorage.getItem("disciplinesSaved")
+      );
+      localStorageClassrooms = await JSON.parse(
+        localStorage.getItem("classroomsSaved")
+      );
+
+      await dispatch({
+        type: LOCAL_STORE_INIT,
+        payload: {
+          groups: localStorageGroups || [
             {
               name: "Добавьте группы",
               date: "",
               disciplines: [{ name: "", hours: 0 }],
-              timetable: [[{ name: "", teacher: "", classRoom: "" }]]
+              timetable: [
+                [
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" }
+                ],
+                [
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" }
+                ],
+                [
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" }
+                ],
+                [
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" }
+                ],
+                [
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" }
+                ],
+                [
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" },
+                  { name: "", teacher: "", classroom: "" }
+                ]
+              ],
+              changes: {}
+            }
+          ],
+          changes: localStorageChanges || {},
+          disciplines: localStorageDisciplines || [[], [], [], [], [], [], []],
+          classrooms: localStorageClassrooms || [
+            {
+              number: 100,
+              maxPeople: 0,
+              mainLesson: ""
             }
           ]
-        });
-      }
-
-      if (localStorageChangesData !== null) {
-        dispatch({
-          type: LOCAL_STORE_CHANGES_INIT,
-          payload: localStorageChangesData
-        });
-      } else {
-        dispatch({
-          type: LOCAL_STORE_CHANGES_INIT,
-          payload: [{}]
-        });
-      }
+        }
+      });
     } catch (e) {
       console.log(e);
     }
@@ -51,15 +111,41 @@ export const localStoreInit = () => {
 };
 
 export const groupSave = groups => {
+  const newGroupsArr = [...groups];
+  const allChanges = {};
+  const allDisciplines = [[], [], [], [], [], [], []];
+
+  newGroupsArr.forEach(group => {
+    for (let key in group.changes) {
+      group.changes[key].forEach((lesson, lessonIndex) => {
+        lesson.groupName = group.name;
+        lesson.lessonNum = lessonIndex + 1;
+      });
+    }
+    Object.assign(allChanges, group.changes);
+
+    group.timetable.forEach((lessons, index) => {
+      lessons.forEach((lesson, lessonIndex) => {
+        lesson.groupName = group.name;
+        lesson.lessonNum = lessonIndex + 1;
+      });
+      allDisciplines[index] = allDisciplines[index].concat(lessons);
+    });
+  });
+
   return {
     type: GROUPS_SAVED,
-    payload: JSON.stringify(groups)
+    payload: {
+      groups: groups,
+      changes: allChanges,
+      disciplines: allDisciplines
+    }
   };
 };
 
-export const groupsChangesSave = groupsChanges => {
+export const classroomsSave = classrooms => {
   return {
-    type: GROUPS_CHANGES_SAVED,
-    payload: JSON.stringify(groupsChanges)
+    type: CLASSROOMS_SAVED,
+    payload: classrooms
   };
 };

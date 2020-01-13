@@ -3,10 +3,8 @@ import { useSelector, useDispatch } from "react-redux";
 import { selectHandler } from "../store/actions/disciplines";
 import { groupSave } from "../store/actions/localStorage";
 import {
-  timetableAddRow,
   timetableDeleteRow,
-  timetableNamesHandler,
-  timetableAddDay
+  timetableNamesHandler
 } from "../store/actions/timetable";
 
 export const TimetablePage = () => {
@@ -55,11 +53,9 @@ export const TimetablePage = () => {
         <p>Расписание</p>
         {selectedGroupValue.timetable.map((day, dayIndex) => (
           <div key={`day${day}dayIndex${dayIndex}`}>
+            <p style={{ marginTop: 40 }}>{days[dayIndex]}</p>
             <table>
               <thead>
-                <tr>
-                  <td>{days[dayIndex]}</td>
-                </tr>
                 <tr>
                   <td>№</td>
                   <td>Дисциплина</td>
@@ -111,8 +107,8 @@ export const TimetablePage = () => {
                     <td>
                       <input
                         type="number"
-                        name="ClassRoom"
-                        value={lesson.classRoom}
+                        name="Classroom"
+                        value={lesson.classroom}
                         onChange={event =>
                           dispatch(
                             timetableNamesHandler(
@@ -146,28 +142,8 @@ export const TimetablePage = () => {
                 ))}
               </tbody>
             </table>
-            <button
-              onClick={() =>
-                dispatch(timetableAddRow(groups, dayIndex, selectedGroupIndex))
-              }
-              className="waves-effect waves-light btn"
-              style={{ marginRight: 10 }}
-              id="new_line"
-              name="button"
-            >
-              <i className="material-icons">add</i>
-            </button>
           </div>
         ))}
-        <button
-          onClick={() => dispatch(timetableAddDay(groups, selectedGroupIndex))}
-          className="waves-effect waves-light btn"
-          style={{ marginRight: 10 }}
-          id="new_line"
-          name="button"
-        >
-          <i className="material-icons">add</i>
-        </button>
         <button
           onClick={() => dispatch(groupSave(groups))}
           className="waves-effect waves-light btn"

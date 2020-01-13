@@ -1,9 +1,4 @@
-import {
-  TIMETABLE_DELETE_ROW,
-  TIMETABLE_ADD_ROW,
-  TIMETABLE_NAMES,
-  TIMETABLE_ADD_DAY
-} from "../types";
+import { TIMETABLE_DELETE_ROW, TIMETABLE_NAMES } from "../types";
 
 export const timetableNamesHandler = (
   event,
@@ -20,8 +15,8 @@ export const timetableNamesHandler = (
     selectedInputInState.name = event.target.value;
   } else if (name === "Teacher") {
     selectedInputInState.teacher = event.target.value;
-  } else if (name === "ClassRoom") {
-    selectedInputInState.classRoom = event.target.value;
+  } else if (name === "Classroom") {
+    selectedInputInState.classroom = event.target.value;
   }
 
   newGroupsArr[selectedGroupIndex].timetable[dayIndex][
@@ -46,33 +41,6 @@ export const timetableDeleteRow = (
   newGroupsArr[selectedGroupIndex].timetable[dayIndex] = newTimetableArr;
   return {
     type: TIMETABLE_DELETE_ROW,
-    payload: newGroupsArr
-  };
-};
-
-export const timetableAddRow = (groups, dayIndex, selectedGroup) => {
-  const newGroupsArr = [...groups];
-  console.log(groups[selectedGroup].timetable[dayIndex]);
-  newGroupsArr[selectedGroup].timetable[dayIndex] = [
-    ...newGroupsArr[selectedGroup].timetable[dayIndex],
-    { name: "", teacher: "", classRoom: "" }
-  ];
-
-  return {
-    type: TIMETABLE_ADD_ROW,
-    payload: newGroupsArr
-  };
-};
-
-export const timetableAddDay = (groups, selectedGroup) => {
-  const newGroupsArr = [...groups];
-  newGroupsArr[selectedGroup].timetable = [
-    ...newGroupsArr[selectedGroup].timetable,
-    [{ name: "", teacher: "", classRoom: "" }]
-  ];
-
-  return {
-    type: TIMETABLE_ADD_DAY,
     payload: newGroupsArr
   };
 };

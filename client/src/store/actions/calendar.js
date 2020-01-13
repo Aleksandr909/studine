@@ -1,7 +1,6 @@
 import {
   CALENDAR_SELECT_HANDLER,
   CALENDAR_DELETE_ROW,
-  CALENDAR_ADD_ROW,
   CALENDAR_NAMES
 } from "../types";
 
@@ -14,24 +13,35 @@ export const dateSelectHandler = date => {
 
 export const calendarNamesHandler = (
   event,
-  dayIndex,
-  lessonIndex,
   selectedGroupIndex,
+  lessonIndex,
+  calendarSelectedDate,
   groups
 ) => {
+  const dayOfWeek = new Date(calendarSelectedDate).getDay();
   let newGroupsArr = [...groups];
   const name = event.target["name"];
-  let selectedInputInState =
-    newGroupsArr[selectedGroupIndex].timetable[dayIndex][lessonIndex];
+  let groupAllChanges = newGroupsArr[selectedGroupIndex].changes;
+  groupAllChanges =
+    groupAllChanges[calendarSelectedDate] === undefined
+      ? {
+          ...groupAllChanges,
+          [calendarSelectedDate]:
+            newGroupsArr[selectedGroupIndex].timetable[dayOfWeek]
+        }
+      : groupAllChanges;
+
+  let selectedInputInState = groupAllChanges[calendarSelectedDate][lessonIndex];
   if (name === "Name") {
     selectedInputInState.name = event.target.value;
   } else if (name === "Teacher") {
     selectedInputInState.teacher = event.target.value;
-  } else if (name === "ClassRoom") {
-    selectedInputInState.classRoom = event.target.value;
+  } else if (name === "Classroom") {
+    selectedInputInState.classroom = event.target.value;
   }
 
-  newGroupsArr[selectedGroupIndex].timetable[dayIndex][
+  newGroupsArr[selectedGroupIndex].changes = groupAllChanges;
+  newGroupsArr[selectedGroupIndex].changes[calendarSelectedDate][
     lessonIndex
   ] = selectedInputInState;
   console.log(newGroupsArr);
@@ -43,31 +53,30 @@ export const calendarNamesHandler = (
 };
 
 export const calendarDeleteRow = (
-  lessonindex,
-  dayIndex,
+  groups,
+  calendarSelectedDate,
   selectedGroupIndex,
-  groups
+  lessonIndex
 ) => {
   const newGroupsArr = [...groups];
-  const newTimetableArr = newGroupsArr[selectedGroupIndex].timetable[dayIndex];
-  newTimetableArr.splice(lessonindex, 1);
-  newGroupsArr[selectedGroupIndex].timetable[dayIndex] = newTimetableArr;
+  const dayOfWeek = new Date(calendarSelectedDate).getDay();
+  let groupAllChanges = newGroupsArr[selectedGroupIndex].changes;
+  groupAllChanges =
+    groupAllChanges[calendarSelectedDate] === undefined
+      ? {
+          ...groupAllChanges,
+          [calendarSelectedDate]:
+            newGroupsArr[selectedGroupIndex].timetable[dayOfWeek]
+        }
+      : groupAllChanges;
+
+  newGroupsArr[selectedGroupIndex].changes = groupAllChanges;
+  newGroupsArr[selectedGroupIndex].changes[calendarSelectedDate].splice(
+    lessonIndex,
+    1
+  );
   return {
     type: CALENDAR_DELETE_ROW,
-    payload: newGroupsArr
-  };
-};
-
-export const calendarAddRow = (groups, dayIndex, selectedGroup) => {
-  const newGroupsArr = [...groups];
-  console.log(groups[selectedGroup].timetable[dayIndex]);
-  newGroupsArr[selectedGroup].timetable[dayIndex] = [
-    ...newGroupsArr[selectedGroup].timetable[dayIndex],
-    { name: "", teacher: "", classRoom: "" }
-  ];
-
-  return {
-    type: CALENDAR_ADD_ROW,
     payload: newGroupsArr
   };
 };

@@ -1,20 +1,19 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { selectHandler } from "../store/actions/disciplines";
-import { groupsChangesSave } from "../store/actions/localStorage";
 import {
-  calendarAddRow,
   calendarDeleteRow,
   calendarNamesHandler,
   dateSelectHandler
 } from "../store/actions/calendar";
+import { groupSave } from "../store/actions/localStorage";
 
 export const CalendarPage = () => {
   useEffect(() => {
     window.M.AutoInit();
   });
   const dispatch = useDispatch();
-  let groups = useSelector(state => state.app.groups);
+  const groups = useSelector(state => state.app.groups);
   const selectedGroupIndex = useSelector(
     state => state.app.disciplinesSelectedGroup
   );
@@ -25,16 +24,10 @@ export const CalendarPage = () => {
   );
   const neededDate = new Date(calendarSelectedDate).getDay();
 
-  const groupsChanges = useSelector(state => state.app.groupsChanges);
-
-  const groupsChangesFind =
-    groupsChanges.find(groups => groups.name === selectedGroupValue.name) !==
-    undefined
-      ? groupsChanges
-          .find(groups => groups.name === selectedGroupValue.name)
-          .timetable.find(lessons => lessons.date === neededDate)
-      : undefined;
-  groups = groupsChangesFind !== undefined ? groupsChangesFind : groups;
+  const selectedGroupTimetableForDay =
+    selectedGroupValue.changes[calendarSelectedDate] === undefined
+      ? selectedGroupValue.timetable[neededDate]
+      : selectedGroupValue.changes[calendarSelectedDate];
 
   const days = [
     "Понедельник",
@@ -55,7 +48,7 @@ export const CalendarPage = () => {
       <div className="row">
         <input
           className="input-field col s12 m2"
-          style={{ paddingTop: 14 }}
+          style={{ paddingTop: 15 }}
           type="date"
           name="Date"
           value={calendarSelectedDate}
@@ -79,7 +72,7 @@ export const CalendarPage = () => {
         </div>
       </div>
 
-      {selectedGroupValue.timetable[neededDate] === undefined ? (
+      {selectedGroupTimetableForDay === undefined ? (
         <p>Расписание для данной группы на "{days[neededDate]}" отсутствует</p>
       ) : (
         <div>
@@ -96,99 +89,86 @@ export const CalendarPage = () => {
                 </tr>
               </thead>
               <tbody id="group_table">
-                {selectedGroupValue.timetable[neededDate].map(
-                  (lesson, lessonIndex) => (
-                    <tr key={`tr+${lessonIndex}`}>
-                      <td>{lessonIndex + 1}</td>
-                      <td>
-                        <input
-                          type="text"
-                          name="Name"
-                          value={lesson.name}
-                          onChange={event =>
-                            dispatch(
-                              calendarNamesHandler(
-                                event,
-                                neededDate,
-                                lessonIndex,
-                                selectedGroupIndex,
-                                groups
-                              )
-                            )
-                          }
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="text"
-                          name="Teacher"
-                          value={lesson.teacher}
-                          onChange={event =>
-                            dispatch(
-                              calendarNamesHandler(
-                                event,
-                                neededDate,
-                                lessonIndex,
-                                selectedGroupIndex,
-                                groups
-                              )
-                            )
-                          }
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="number"
-                          name="ClassRoom"
-                          value={lesson.classRoom}
-                          onChange={event =>
-                            dispatch(
-                              calendarNamesHandler(
-                                event,
-                                neededDate,
-                                lessonIndex,
-                                selectedGroupIndex,
-                                groups
-                              )
-                            )
-                          }
-                        />
-                      </td>
-                      <td
-                        className="btn-floating btn-small waves-effect waves-light red center"
-                        style={{ marginTop: 20 }}
-                        onClick={() =>
+                {selectedGroupTimetableForDay.map((lesson, lessonIndex) => (
+                  <tr key={`tr+${lessonIndex}`}>
+                    <td>{lessonIndex + 1}</td>
+                    <td>
+                      <input
+                        type="text"
+                        name="Name"
+                        value={lesson.name}
+                        onChange={event =>
                           dispatch(
-                            calendarDeleteRow(
-                              lessonIndex,
-                              neededDate,
+                            calendarNamesHandler(
+                              event,
                               selectedGroupIndex,
+                              lessonIndex,
+                              calendarSelectedDate,
                               groups
                             )
                           )
                         }
-                      >
-                        <i className="material-icons">remove</i>
-                      </td>
-                    </tr>
-                  )
-                )}
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="text"
+                        name="Teacher"
+                        value={lesson.teacher}
+                        onChange={event =>
+                          dispatch(
+                            calendarNamesHandler(
+                              event,
+                              selectedGroupIndex,
+                              lessonIndex,
+                              calendarSelectedDate,
+                              groups
+                            )
+                          )
+                        }
+                      />
+                    </td>
+                    <td>
+                      <input
+                        type="number"
+                        name="Classroom"
+                        value={lesson.classroom}
+                        onChange={event =>
+                          dispatch(
+                            calendarNamesHandler(
+                              event,
+                              selectedGroupIndex,
+                              lessonIndex,
+                              calendarSelectedDate,
+                              groups
+                            )
+                          )
+                        }
+                      />
+                    </td>
+                    <td
+                      className="btn-floating btn-small waves-effect waves-light red center"
+                      style={{ marginTop: 20 }}
+                      onClick={() =>
+                        dispatch(
+                          calendarDeleteRow(
+                            groups,
+                            calendarSelectedDate,
+                            selectedGroupIndex,
+                            lessonIndex
+                          )
+                        )
+                      }
+                    >
+                      <i className="material-icons">remove</i>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
           <button
-            onClick={() =>
-              dispatch(calendarAddRow(groups, neededDate, selectedGroupIndex))
-            }
-            className="waves-effect waves-light btn"
-            style={{ marginRight: 10 }}
-            id="new_line"
-            name="button"
-          >
-            <i className="material-icons">add</i>
-          </button>
-          <button
-            onClick={() => dispatch(groupsChangesSave(groups))}
+            onClick={() => dispatch(groupSave(groups))}
             className="waves-effect waves-light btn"
             id="add"
             name="button"

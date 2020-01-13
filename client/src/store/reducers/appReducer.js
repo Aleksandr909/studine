@@ -9,15 +9,17 @@ import {
   GROUPS_SAVED,
   LOCAL_STORE_INIT,
   TIMETABLE_DELETE_ROW,
-  TIMETABLE_ADD_ROW,
   TIMETABLE_NAMES,
-  TIMETABLE_ADD_DAY,
   CALENDAR_SELECT_HANDLER,
   CALENDAR_DELETE_ROW,
-  CALENDAR_ADD_ROW,
   CALENDAR_NAMES,
-  GROUPS_CHANGES_SAVED,
-  LOCAL_STORE_CHANGES_INIT
+  CLASSROOMS_ALL_NAMES,
+  CLASSROOMS_ALL_DELETE_ROW,
+  CLASSROOMS_ALL_ADD_ROW,
+  CLASSROOMS_SAVED,
+  CLASSROOMS_SELECT_HANDLER,
+  CLASSROOMS_NAMES,
+  CLASSROOMS_DELETE_ROW
 } from "../types";
 const initialState = {
   groups: [
@@ -25,21 +27,21 @@ const initialState = {
       name: "Добавьте группы",
       date: "",
       disciplines: [{ name: "", hours: 0 }],
-      timetable: [[{ name: "", teacher: "", classRoom: "" }]]
+      timetable: [[{ name: "", teacher: "", classroom: "" }]],
+      changes: {}
     }
   ],
-  groupsSaved: [
-    {
-      name: "Добавьте группы",
-      date: "",
-      disciplines: [{ name: "", hours: 0 }],
-      timetable: [[{ name: "", teacher: "", classRoom: "" }]]
-    }
-  ],
-  groupsChanges: [{}],
   disciplinesSelectedGroup: 0,
   localStoreReady: false,
-  calendarSelectedDate: new Date().toISOString().substring(0, 10)
+  calendarSelectedDate: new Date().toISOString().substring(0, 10),
+  classrooms: [
+    {
+      number: 100,
+      maxPeople: 0,
+      mainLesson: ""
+    }
+  ],
+  selectedClassroom: 0
 };
 
 export const appReducer = (state = initialState, action) => {
@@ -47,27 +49,44 @@ export const appReducer = (state = initialState, action) => {
     case LOCAL_STORE_INIT:
       return {
         ...state,
-        groups: action.payload,
+        groups: action.payload.groups,
+        changes: action.payload.changes,
+        disciplines: action.payload.disciplines,
+        classrooms: action.payload.classrooms,
         localStoreReady: true
       };
-    case LOCAL_STORE_CHANGES_INIT:
+    case GROUPS_SAVED:
+      localStorage.setItem(
+        "groupsSaved",
+        JSON.stringify(action.payload.groups)
+      );
+      localStorage.setItem(
+        "changesSaved",
+        JSON.stringify(action.payload.changes)
+      );
+      localStorage.setItem(
+        "disciplinesSaved",
+        JSON.stringify(action.payload.disciplines)
+      );
       return {
         ...state,
-        groupsChanges: action.payload,
-        localStoreReady: true
+        groups: action.payload.groups,
+        changes: action.payload.changes,
+        disciplines: action.payload.disciplines
       };
+    case CLASSROOMS_SAVED:
+      localStorage.setItem("classroomsSaved", JSON.stringify(action.payload));
+      return {
+        ...state,
+        classrooms: action.payload
+      };
+
     case GROUPS_NAMES:
       return { ...state, groups: action.payload };
     case GROUPS_DELETE_ROW:
       return { ...state, groups: action.payload };
     case GROUPS_ADD_ROW:
       return { ...state, groups: action.payload };
-    case GROUPS_SAVED:
-      localStorage.setItem("groupsSaved", action.payload);
-      break;
-    case GROUPS_CHANGES_SAVED:
-      localStorage.setItem("groupsChangesSaved", action.payload);
-      break;
 
     case DISCIPLINES_SELECT_HANDLER:
       return Object.assign(state, { disciplinesSelectedGroup: action.payload });
@@ -80,23 +99,32 @@ export const appReducer = (state = initialState, action) => {
 
     case TIMETABLE_DELETE_ROW:
       return { ...state, groups: action.payload };
-    case TIMETABLE_ADD_ROW:
-      return { ...state, groups: action.payload };
     case TIMETABLE_NAMES:
-      return { ...state, groups: action.payload };
-    case TIMETABLE_ADD_DAY:
       return { ...state, groups: action.payload };
 
     case CALENDAR_SELECT_HANDLER:
       return Object.assign(state, { calendarSelectedDate: action.payload });
     case CALENDAR_DELETE_ROW:
-      return { ...state, groupsChanges: action.payload };
-    case CALENDAR_ADD_ROW:
-      return { ...state, groupsChanges: action.payload };
+      return { ...state, groups: action.payload };
     case CALENDAR_NAMES:
-      return { ...state, groupsChanges: action.payload };
+      return { ...state, groups: action.payload };
+
+    case CLASSROOMS_ALL_NAMES:
+      return { ...state, classrooms: action.payload };
+    case CLASSROOMS_ALL_DELETE_ROW:
+      return { ...state, classrooms: action.payload };
+    case CLASSROOMS_ALL_ADD_ROW:
+      return { ...state, classrooms: action.payload };
+
+    case CLASSROOMS_NAMES:
+      return { ...state, changes: action.payload };
+    case CLASSROOMS_DELETE_ROW:
+      return { ...state, changes: action.payload };
     default:
       break;
+
+    case CLASSROOMS_SELECT_HANDLER:
+      return Object.assign(state, { selectedClassroom: action.payload });
   }
   return state;
 };

@@ -33,7 +33,69 @@ export const addRow = groups => {
       name: "",
       date: "",
       disciplines: [],
-      timetable: []
+      timetable: [
+        [
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" }
+        ],
+        [
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" }
+        ],
+        [
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" }
+        ],
+        [
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" }
+        ],
+        [
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" }
+        ],
+        [
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" },
+          { name: "", teacher: "", classroom: "" }
+        ]
+      ],
+      changes: {}
     }
   ];
 
