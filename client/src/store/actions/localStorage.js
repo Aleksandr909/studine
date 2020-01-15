@@ -1,4 +1,9 @@
-import { GROUPS_SAVED, LOCAL_STORE_INIT, CLASSROOMS_SAVED } from "../types";
+import {
+  GROUPS_SAVED,
+  LOCAL_STORE_INIT,
+  CLASSROOMS_SAVED,
+  TEACHERS_SAVED
+} from "../types";
 
 export const localStoreInit = () => {
   return async dispatch => {
@@ -6,6 +11,7 @@ export const localStoreInit = () => {
     let localStorageChanges = {};
     let localStorageDisciplines = {};
     let localStorageClassrooms = [];
+    let localStorageTeachers = [];
     try {
       localStorageGroups = await JSON.parse(
         localStorage.getItem("groupsSaved")
@@ -18,6 +24,9 @@ export const localStoreInit = () => {
       );
       localStorageClassrooms = await JSON.parse(
         localStorage.getItem("classroomsSaved")
+      );
+      localStorageTeachers = await JSON.parse(
+        localStorage.getItem("teachersSaved")
       );
 
       await dispatch({
@@ -101,6 +110,12 @@ export const localStoreInit = () => {
               maxPeople: 0,
               mainLesson: ""
             }
+          ],
+          teachers: localStorageTeachers || [
+            {
+              name: "Иванов И.И.",
+              mainLesson: ""
+            }
           ]
         }
       });
@@ -147,5 +162,12 @@ export const classroomsSave = classrooms => {
   return {
     type: CLASSROOMS_SAVED,
     payload: classrooms
+  };
+};
+
+export const teachersSave = teachers => {
+  return {
+    type: TEACHERS_SAVED,
+    payload: teachers
   };
 };

@@ -8,10 +8,11 @@ import { CalendarPage } from "./pages/CalendarPage";
 import { DisciplinesPage } from "./pages/DisciplinesPage";
 import { ImportantPage } from "./pages/ImportantPage";
 import { TimetablePage } from "./pages/TimetablePage";
-import TeachersPage from "./pages/TeachersPage";
+import { TeachersPage } from "./pages/TeachersPage";
 import { ClassroomsPage } from "./pages/ClassroomsPage";
-import ChangesPage from "./pages/ChangesPage";
+import { ChangesPage } from "./pages/ChangesPage";
 import { ClassroomsAllPage } from "./pages/ClassroomsAllPage";
+import { TeachersAllPage } from "./pages/TeachersAllPage";
 
 export const useRoutes = isAuthenticated => {
   if (isAuthenticated) {
@@ -40,6 +41,9 @@ export const useRoutes = isAuthenticated => {
         </Route>
         <Route path="/teachers" exact>
           <TeachersPage />
+        </Route>
+        <Route path="/teachers/all" exact>
+          <TeachersAllPage />
         </Route>
         <Route path="/classrooms" exact>
           <ClassroomsPage />

@@ -2,11 +2,7 @@ import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { dateSelectHandler } from "../store/actions/calendar";
 import { Link } from "react-router-dom";
-import {
-  classroomSelectHandler,
-  classroomsNamesHandler,
-  classroomsDeleteRow
-} from "../store/actions/classrooms";
+import { classroomSelectHandler } from "../store/actions/classrooms";
 
 export const ClassroomsPage = () => {
   useEffect(() => {
@@ -16,8 +12,7 @@ export const ClassroomsPage = () => {
   const calendarSelectedDate = useSelector(
     state => state.app.calendarSelectedDate
   );
-  const selectedClassroom = useSelector(state => state.app.selectedClassroom);
-  // const groups = useSelector(state => state.app.groups);
+  const classroom = useSelector(state => state.app.selectedClassroom);
 
   const disciplines = useSelector(state => state.app.disciplines);
   const changes = useSelector(state => state.app.changes);
@@ -26,18 +21,18 @@ export const ClassroomsPage = () => {
   const neededDate = new Date(calendarSelectedDate).getDay();
 
   let selectedClassroomTimetableForDay = [
-    { name: "", teacher: "", classroom: "", groupName: "", lessonNum: 1 },
-    { name: "", teacher: "", classroom: "", groupName: "", lessonNum: 2 },
-    { name: "", teacher: "", classroom: "", groupName: "", lessonNum: 3 },
-    { name: "", teacher: "", classroom: "", groupName: "", lessonNum: 4 },
-    { name: "", teacher: "", classroom: "", groupName: "", lessonNum: 5 },
-    { name: "", teacher: "", classroom: "", groupName: "", lessonNum: 6 },
-    { name: "", teacher: "", classroom: "", groupName: "", lessonNum: 7 },
-    { name: "", teacher: "", classroom: "", groupName: "", lessonNum: 8 }
+    { name: "", teacher: "", groupName: "", lessonNum: 1 },
+    { name: "", teacher: "", groupName: "", lessonNum: 2 },
+    { name: "", teacher: "", groupName: "", lessonNum: 3 },
+    { name: "", teacher: "", groupName: "", lessonNum: 4 },
+    { name: "", teacher: "", groupName: "", lessonNum: 5 },
+    { name: "", teacher: "", groupName: "", lessonNum: 6 },
+    { name: "", teacher: "", groupName: "", lessonNum: 7 },
+    { name: "", teacher: "", groupName: "", lessonNum: 8 }
   ];
   disciplines[neededDate].forEach(elem => {
     if (
-      elem.classroom === classrooms[selectedClassroom].number &&
+      elem.classroom === classrooms[classroom].number &&
       elem.classroom !== undefined
     ) {
       selectedClassroomTimetableForDay[elem.lessonNum - 1] = elem;
@@ -46,7 +41,7 @@ export const ClassroomsPage = () => {
   if (changes[calendarSelectedDate] !== undefined) {
     changes[calendarSelectedDate].forEach(elem => {
       if (
-        elem.classroom === classrooms[selectedClassroom].number &&
+        elem.classroom === classrooms[classroom].number &&
         elem.classroom !== undefined
       ) {
         selectedClassroomTimetableForDay[elem.lessonNum - 1] = elem;
@@ -81,7 +76,7 @@ export const ClassroomsPage = () => {
         />
         <div className="input-field col s12 m2">
           <select
-            defaultValue={selectedClassroom}
+            defaultValue={classroom}
             onChange={event =>
               dispatch(classroomSelectHandler(event.target.value))
             }
@@ -101,94 +96,27 @@ export const ClassroomsPage = () => {
           Изменить аудитории <i className="material-icons">edit</i>
         </Link>
       </div>
-
-      <div>
-        <p>{days[neededDate]}</p>
-        <div>
-          <table>
-            <thead>
-              <tr>
-                <td>№</td>
-                <td>Дисциплина</td>
-                <td>Преподаватель</td>
-                <td>Группа</td>
-                <td>Удалить</td>
-              </tr>
-            </thead>
-            <tbody id="group_table">
-              {selectedClassroomTimetableForDay.map((lesson, lessonIndex) => (
-                <tr key={`tr+${lessonIndex}`}>
-                  <td>{lesson.lessonNum}</td>
-                  <td>
-                    <input
-                      type="text"
-                      name="Name"
-                      value={lesson.name}
-                      onChange={event =>
-                        dispatch(
-                          classroomsNamesHandler(
-                            event,
-                            lesson,
-                            classrooms[selectedClassroom].number,
-                            calendarSelectedDate,
-                            changes
-                          )
-                        )
-                      }
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="text"
-                      name="Teacher"
-                      value={lesson.teacher}
-                      onChange={event =>
-                        dispatch(
-                          classroomsNamesHandler(
-                            event,
-                            lesson,
-                            classrooms[selectedClassroom].number,
-                            calendarSelectedDate,
-                            changes
-                          )
-                        )
-                      }
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="text"
-                      name="GroupName"
-                      value={lesson.groupName}
-                      onChange={event =>
-                        dispatch(
-                          classroomsNamesHandler(
-                            event,
-                            lesson,
-                            classrooms[selectedClassroom].number,
-                            calendarSelectedDate,
-                            changes
-                          )
-                        )
-                      }
-                    />
-                  </td>
-                  <td
-                    className="btn-floating btn-small waves-effect waves-light red center"
-                    style={{ marginTop: 20 }}
-                    onClick={() => dispatch(classroomsDeleteRow())}
-                  >
-                    <i className="material-icons">remove</i>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <button className="waves-effect waves-light btn" id="add" name="button">
-          Сохранить <i className="material-icons">cloud_download</i>
-        </button>
-      </div>
+      <p>{days[neededDate]}</p>
+      <table>
+        <thead>
+          <tr>
+            <td>№</td>
+            <td>Дисциплина</td>
+            <td>Преподаватель</td>
+            <td>Группа</td>
+          </tr>
+        </thead>
+        <tbody id="group_table">
+          {selectedClassroomTimetableForDay.map((lesson, lessonIndex) => (
+            <tr key={`tr+${lessonIndex}`}>
+              <td>{lesson.lessonNum}</td>
+              <td>{lesson.name}</td>
+              <td>{lesson.teacher}</td>
+              <td>{lesson.groupName}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };

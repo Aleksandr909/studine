@@ -1,13 +1,21 @@
 import {
   CALENDAR_SELECT_HANDLER,
   CALENDAR_DELETE_ROW,
-  CALENDAR_NAMES
+  CALENDAR_NAMES,
+  DISCIPLINE_SELECT_HANDLER
 } from "../types";
 
 export const dateSelectHandler = date => {
   return {
     type: CALENDAR_SELECT_HANDLER,
     payload: date
+  };
+};
+
+export const disciplineSelectHandler = discipline => {
+  return {
+    type: DISCIPLINE_SELECT_HANDLER,
+    payload: discipline
   };
 };
 
@@ -22,12 +30,24 @@ export const calendarNamesHandler = (
   let newGroupsArr = [...groups];
   const name = event.target["name"];
   let groupAllChanges = newGroupsArr[selectedGroupIndex].changes;
+  const calendarSelectedDateTimetable = [
+    { name: "", teacher: "", classroom: "" },
+    { name: "", teacher: "", classroom: "" },
+    { name: "", teacher: "", classroom: "" },
+    { name: "", teacher: "", classroom: "" },
+    { name: "", teacher: "", classroom: "" },
+    { name: "", teacher: "", classroom: "" },
+    { name: "", teacher: "", classroom: "" },
+    { name: "", teacher: "", classroom: "" }
+  ];
+  groups[selectedGroupIndex].timetable[dayOfWeek].forEach((element, index) => {
+    calendarSelectedDateTimetable[index] = { ...element };
+  });
   groupAllChanges =
     groupAllChanges[calendarSelectedDate] === undefined
       ? {
           ...groupAllChanges,
-          [calendarSelectedDate]:
-            newGroupsArr[selectedGroupIndex].timetable[dayOfWeek]
+          [calendarSelectedDate]: calendarSelectedDateTimetable
         }
       : groupAllChanges;
 

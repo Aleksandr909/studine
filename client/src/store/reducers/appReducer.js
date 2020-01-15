@@ -18,8 +18,12 @@ import {
   CLASSROOMS_ALL_ADD_ROW,
   CLASSROOMS_SAVED,
   CLASSROOMS_SELECT_HANDLER,
-  CLASSROOMS_NAMES,
-  CLASSROOMS_DELETE_ROW
+  TEACHERS_SELECT_HANDLER,
+  TEACHERS_ALL_NAMES,
+  TEACHERS_ALL_DELETE_ROW,
+  TEACHERS_ALL_ADD_ROW,
+  TEACHERS_SAVED,
+  DISCIPLINE_SELECT_HANDLER
 } from "../types";
 const initialState = {
   groups: [
@@ -41,7 +45,15 @@ const initialState = {
       mainLesson: ""
     }
   ],
-  selectedClassroom: 0
+  selectedClassroom: 0,
+  teachers: [
+    {
+      name: "Иванов И.И.",
+      mainLesson: ""
+    }
+  ],
+  selectedTeacher: 0,
+  selectedDiscipline: "all"
 };
 
 export const appReducer = (state = initialState, action) => {
@@ -53,6 +65,7 @@ export const appReducer = (state = initialState, action) => {
         changes: action.payload.changes,
         disciplines: action.payload.disciplines,
         classrooms: action.payload.classrooms,
+        teachers: action.payload.teachers,
         localStoreReady: true
       };
     case GROUPS_SAVED:
@@ -79,6 +92,12 @@ export const appReducer = (state = initialState, action) => {
       return {
         ...state,
         classrooms: action.payload
+      };
+    case TEACHERS_SAVED:
+      localStorage.setItem("teachersSaved", JSON.stringify(action.payload));
+      return {
+        ...state,
+        teachers: action.payload
       };
 
     case GROUPS_NAMES:
@@ -116,15 +135,21 @@ export const appReducer = (state = initialState, action) => {
     case CLASSROOMS_ALL_ADD_ROW:
       return { ...state, classrooms: action.payload };
 
-    case CLASSROOMS_NAMES:
-      return { ...state, changes: action.payload };
-    case CLASSROOMS_DELETE_ROW:
-      return { ...state, changes: action.payload };
-    default:
-      break;
+    case TEACHERS_ALL_NAMES:
+      return { ...state, teachers: action.payload };
+    case TEACHERS_ALL_DELETE_ROW:
+      return { ...state, teachers: action.payload };
+    case TEACHERS_ALL_ADD_ROW:
+      return { ...state, teachers: action.payload };
 
     case CLASSROOMS_SELECT_HANDLER:
       return Object.assign(state, { selectedClassroom: action.payload });
+    case TEACHERS_SELECT_HANDLER:
+      return Object.assign(state, { selectedTeacher: action.payload });
+    case DISCIPLINE_SELECT_HANDLER:
+      return Object.assign(state, { selectedDiscipline: action.payload });
+    default:
+      break;
   }
   return state;
 };
