@@ -2,6 +2,8 @@
 
 ### Админ панель на react для [приложения](https://github.com/Aleksandr909/UniverCityA).
 
+**Дизайн** - [figma](https://www.figma.com/proto/vXLzdi4NuE5qjWvhTMcrCU/Untitled?scaling=min-zoom&node-id=1%3A3)
+
 Предназначена для работы с расписанием(обновление, просмотр изменений и расписания аудиторий, преподавателей и студентов) 
 и добавления новостей.
 
