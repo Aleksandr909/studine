@@ -1,16 +1,8 @@
 import {
-  DISCIPLINES_SELECT_HANDLER,
   DISCIPLINES_DELETE_ROW,
   DISCIPLINES_ADD_ROW,
   DISCIPLINES_NAMES
 } from "../types";
-
-export const selectHandler = elem => {
-  return {
-    type: DISCIPLINES_SELECT_HANDLER,
-    payload: elem
-  };
-};
 
 export const discNamesHandler = (event, index, selectedGroupIndex, groups) => {
   let newGroupsArr = [...groups];

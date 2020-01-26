@@ -12,8 +12,8 @@ export const classroomsAllNamesHandler = (
   let newClassroomsArr = [...classroomsAll];
   const name = event.target["name"];
   let selectedInputInState = { ...newClassroomsArr[classroomIndex] };
-  if (name === "Number") {
-    selectedInputInState.number = event.target.value;
+  if (name === "Name") {
+    selectedInputInState.name = event.target.value;
   } else if (name === "MaxPeople") {
     selectedInputInState.maxPeople = event.target.value;
   } else if (name === "MainLesson") {
@@ -40,7 +40,7 @@ export const classroomsAllAddRow = classrooms => {
   const newClassroomsArr = [
     ...classrooms,
     {
-      number: 0,
+      name: 0,
       maxPeople: 0,
       mainLesson: ""
     }

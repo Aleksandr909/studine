@@ -1,12 +1,10 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { selectHandler } from "../store/actions/disciplines";
-import {
-  calendarDeleteRow,
-  calendarNamesHandler,
-  dateSelectHandler
-} from "../store/actions/calendar";
+import { calendarNamesHandler } from "../store/actions/calendar";
 import { groupSave } from "../store/actions/localStorage";
+import { Datalist } from "../components/Datalist";
+import { days } from "../store/constants";
+import { dateSelectHandler } from "../store/actions/selectHandler";
 
 export const CalendarPage = () => {
   useEffect(() => {
@@ -14,30 +12,23 @@ export const CalendarPage = () => {
   });
   const dispatch = useDispatch();
   const groups = useSelector(state => state.app.groups);
-  const selectedGroupIndex = useSelector(
-    state => state.app.disciplinesSelectedGroup
+  const selectedGroup = useSelector(state => state.app.selectedGroup);
+  let selectedGroupIndex = groups.findIndex(
+    elem => elem.name === selectedGroup
   );
+  selectedGroupIndex = selectedGroupIndex === -1 ? 0 : selectedGroupIndex;
+
   const selectedGroupValue = groups[selectedGroupIndex];
 
   const calendarSelectedDate = useSelector(
     state => state.app.calendarSelectedDate
   );
-  const neededDate = new Date(calendarSelectedDate).getDay();
+  const neededDate = (+new Date(calendarSelectedDate) / 86400000 + 3) % 14;
 
   const selectedGroupTimetableForDay =
     selectedGroupValue.changes[calendarSelectedDate] === undefined
       ? selectedGroupValue.timetable[neededDate]
       : selectedGroupValue.changes[calendarSelectedDate];
-
-  const days = [
-    "Понедельник",
-    "Вторник",
-    "Среда",
-    "Четверг",
-    "Пятница",
-    "Суббота",
-    "Воскресенье"
-  ];
 
   return (
     <div>
@@ -54,22 +45,12 @@ export const CalendarPage = () => {
           value={calendarSelectedDate}
           onChange={event => dispatch(dateSelectHandler(event.target.value))}
         />
-        <div className="input-field col s12 m2">
-          <select
-            defaultValue="0"
-            onChange={event => dispatch(selectHandler(event.target.value))}
-          >
-            <option value="" disabled>
-              Выберите группу
-            </option>
-            {groups.map((elem, index) => (
-              <option key={elem.name + index} value={index}>
-                {elem.name}
-              </option>
-            ))}
-          </select>
-          <label>Выберите группу</label>
-        </div>
+        <Datalist
+          selectedValue={selectedGroupValue.name}
+          options={groups}
+          text="Выберите группу"
+          name="Group"
+        />
       </div>
 
       {selectedGroupTimetableForDay === undefined ? (
@@ -85,7 +66,6 @@ export const CalendarPage = () => {
                   <td>Дисциплина</td>
                   <td>Преподаватель</td>
                   <td>Аудитория</td>
-                  <td>Удалить</td>
                 </tr>
               </thead>
               <tbody id="group_table">
@@ -130,7 +110,7 @@ export const CalendarPage = () => {
                     </td>
                     <td>
                       <input
-                        type="number"
+                        type="text"
                         name="Classroom"
                         value={lesson.classroom}
                         onChange={event =>
@@ -145,22 +125,6 @@ export const CalendarPage = () => {
                           )
                         }
                       />
-                    </td>
-                    <td
-                      className="btn-floating btn-small waves-effect waves-light red center"
-                      style={{ marginTop: 20 }}
-                      onClick={() =>
-                        dispatch(
-                          calendarDeleteRow(
-                            groups,
-                            calendarSelectedDate,
-                            selectedGroupIndex,
-                            lessonIndex
-                          )
-                        )
-                      }
-                    >
-                      <i className="material-icons">remove</i>
                     </td>
                   </tr>
                 ))}

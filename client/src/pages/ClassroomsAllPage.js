@@ -13,7 +13,6 @@ export const ClassroomsAllPage = () => {
   });
   const dispatch = useDispatch();
   const classroomsAll = useSelector(state => state.app.classrooms);
-  console.log(classroomsAll);
 
   return (
     <div>
@@ -34,10 +33,10 @@ export const ClassroomsAllPage = () => {
                 <td>{classroomIndex + 1}</td>
                 <td>
                   <input
-                    type="number"
+                    type="text"
                     id="number"
-                    name="Number"
-                    value={classroom.number}
+                    name="Name"
+                    value={classroom.name}
                     onChange={event =>
                       dispatch(
                         classroomsAllNamesHandler(

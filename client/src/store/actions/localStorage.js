@@ -106,7 +106,7 @@ export const localStoreInit = () => {
           disciplines: localStorageDisciplines || [[], [], [], [], [], [], []],
           classrooms: localStorageClassrooms || [
             {
-              number: 100,
+              name: 100,
               maxPeople: 0,
               mainLesson: ""
             }
@@ -128,26 +128,51 @@ export const localStoreInit = () => {
 export const groupSave = groups => {
   const newGroupsArr = [...groups];
   const allChanges = {};
-  const allDisciplines = [[], [], [], [], [], [], []];
+  const allDisciplines = [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    []
+  ];
 
   newGroupsArr.forEach(group => {
+    const newGroupChanges = {};
     for (let key in group.changes) {
+      newGroupChanges[key] = [];
       group.changes[key].forEach((lesson, lessonIndex) => {
-        lesson.groupName = group.name;
-        lesson.lessonNum = lessonIndex + 1;
+        if (lesson.name !== "") {
+          newGroupChanges[key].push({
+            ...lesson,
+            groupName: group.name,
+            lessonNum: lessonIndex + 1
+          });
+        }
       });
     }
-    Object.assign(allChanges, group.changes);
 
+    Object.assign(allChanges, newGroupChanges);
     group.timetable.forEach((lessons, index) => {
       lessons.forEach((lesson, lessonIndex) => {
-        lesson.groupName = group.name;
-        lesson.lessonNum = lessonIndex + 1;
+        if (lesson.name !== "") {
+          allDisciplines[index].push({
+            ...lesson,
+            groupName: group.name,
+            lessonNum: lessonIndex + 1
+          });
+        }
       });
-      allDisciplines[index] = allDisciplines[index].concat(lessons);
     });
   });
-
   return {
     type: GROUPS_SAVED,
     payload: {

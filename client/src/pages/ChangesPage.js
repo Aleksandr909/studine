@@ -1,17 +1,18 @@
 import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { selectHandler } from "../store/actions/disciplines";
-import { disciplineSelectHandler } from "../store/actions/calendar";
+import { useSelector } from "react-redux";
+import { days } from "../store/constants";
+import { Datalist } from "../components/Datalist";
 
 export const ChangesPage = () => {
-  const dispatch = useDispatch();
   useEffect(() => {
     window.M.AutoInit();
   });
   const groups = useSelector(state => state.app.groups);
-  const selectedGroupIndex = useSelector(
-    state => state.app.disciplinesSelectedGroup
+  const selectedGroup = useSelector(state => state.app.selectedGroup);
+  let selectedGroupIndex = groups.findIndex(
+    elem => elem.name === selectedGroup
   );
+  selectedGroupIndex = selectedGroupIndex === -1 ? 0 : selectedGroupIndex;
   const selectedGroupValue = groups[selectedGroupIndex];
 
   const changes = useSelector(state => state.app.changes);
@@ -20,9 +21,8 @@ export const ChangesPage = () => {
   const selectedDiscipline = useSelector(state => state.app.selectedDiscipline);
 
   const allChangesForGroup = {};
-
   for (let key in changes) {
-    const dayOfWeek = new Date(key).getDay();
+    const dayOfWeek = (+new Date(key) / 86400000 + 3) % 14;
 
     changes[key].forEach(lesson => {
       if (selectedDiscipline === "all") {
@@ -49,8 +49,8 @@ export const ChangesPage = () => {
           selectedGroupValue.timetable[dayOfWeek][lesson.lessonNum - 1]
             .teacher !== lesson.teacher) &&
         (selectedGroupValue.timetable[dayOfWeek][lesson.lessonNum - 1].name ===
-          groupDisciplines[selectedDiscipline].name ||
-          lesson.name === groupDisciplines[selectedDiscipline].name)
+          selectedDiscipline ||
+          lesson.name === selectedDiscipline)
       ) {
         allChangesForGroup[key] =
           allChangesForGroup[key] === undefined ? [] : allChangesForGroup[key];
@@ -62,63 +62,31 @@ export const ChangesPage = () => {
     });
   }
 
-  const days = [
-    "Понедельник",
-    "Вторник",
-    "Среда",
-    "Четверг",
-    "Пятница",
-    "Суббота"
-  ];
-
   return (
     <div>
       <h6>
         На данной странице вы можете посмотреть изменения в расписании у групп.
       </h6>
       <div className="row">
-        <div className="input-field col s12 m2">
-          <select
-            defaultValue="0"
-            onChange={event => dispatch(selectHandler(event.target.value))}
-          >
-            <option value="" disabled>
-              Выберите группу
-            </option>
-            {groups.map((elem, index) => (
-              <option key={elem.name + index} value={index}>
-                {elem.name}
-              </option>
-            ))}
-          </select>
-          <label>Выберите группу</label>
-        </div>
-        <div className="input-field col s12 m2">
-          <select
-            defaultValue="all"
-            onChange={event =>
-              dispatch(disciplineSelectHandler(event.target.value))
-            }
-          >
-            <option value="" disabled>
-              Выберите дисциплину
-            </option>
-            <option value="all">Все дисциплины</option>
-            {groupDisciplines.map((elem, index) => (
-              <option key={elem.name + index} value={index}>
-                {elem.name}
-              </option>
-            ))}
-          </select>
-          <label>Выберите дисциплину</label>
-        </div>
+        <Datalist
+          selectedValue={selectedGroupValue.name}
+          options={groups}
+          text="Выберите группу"
+          name="Group"
+        />
+        <Datalist
+          selectedValue={selectedDiscipline}
+          options={groupDisciplines}
+          text="all"
+          name="Discipline"
+        />
       </div>
       <div>
         <p>Расписание</p>
         {Object.keys(allChangesForGroup).map(day => (
           <div key={`day${day}`}>
             <p style={{ marginTop: 40 }}>
-              {`${day} - ${days[new Date(day).getDay()]}`}
+              {`${day} - ${days[(+new Date(day) / 86400000 + 3) % 14]}`}
             </p>
             <table>
               <thead>
@@ -136,7 +104,7 @@ export const ChangesPage = () => {
               <tbody id="group_table">
                 {allChangesForGroup[day].map((lesson, lessonIndex) => (
                   <tr key={`tr+${lessonIndex}`}>
-                    <td>{lesson.from.lessonNum}</td>
+                    <td>{lesson.to.lessonNum}</td>
                     <td>{lesson.from.name}</td>
                     <td>{lesson.from.teacher}</td>
                     <td>{lesson.from.classroom}</td>

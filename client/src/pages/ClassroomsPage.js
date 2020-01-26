@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { dateSelectHandler } from "../store/actions/calendar";
 import { Link } from "react-router-dom";
-import { classroomSelectHandler } from "../store/actions/classrooms";
+import { days } from "../store/constants";
+import { Datalist } from "../components/Datalist";
+import { dateSelectHandler } from "../store/actions/selectHandler";
 
 export const ClassroomsPage = () => {
   useEffect(() => {
@@ -12,13 +13,13 @@ export const ClassroomsPage = () => {
   const calendarSelectedDate = useSelector(
     state => state.app.calendarSelectedDate
   );
-  const classroom = useSelector(state => state.app.selectedClassroom);
+  const classroomNum = useSelector(state => state.app.selectedClassroom);
 
   const disciplines = useSelector(state => state.app.disciplines);
   const changes = useSelector(state => state.app.changes);
   const classrooms = useSelector(state => state.app.classrooms);
 
-  const neededDate = new Date(calendarSelectedDate).getDay();
+  const neededDate = (+new Date(calendarSelectedDate) / 86400000 + 3) % 14;
 
   let selectedClassroomTimetableForDay = [
     { name: "", teacher: "", groupName: "", lessonNum: 1 },
@@ -30,34 +31,19 @@ export const ClassroomsPage = () => {
     { name: "", teacher: "", groupName: "", lessonNum: 7 },
     { name: "", teacher: "", groupName: "", lessonNum: 8 }
   ];
+
   disciplines[neededDate].forEach(elem => {
-    if (
-      elem.classroom === classrooms[classroom].number &&
-      elem.classroom !== undefined
-    ) {
+    if (elem.classroom === classroomNum && elem.classroom !== undefined) {
       selectedClassroomTimetableForDay[elem.lessonNum - 1] = elem;
     }
   });
   if (changes[calendarSelectedDate] !== undefined) {
     changes[calendarSelectedDate].forEach(elem => {
-      if (
-        elem.classroom === classrooms[classroom].number &&
-        elem.classroom !== undefined
-      ) {
+      if (elem.classroom === classroomNum && elem.classroom !== undefined) {
         selectedClassroomTimetableForDay[elem.lessonNum - 1] = elem;
       }
     });
   }
-
-  const days = [
-    "Понедельник",
-    "Вторник",
-    "Среда",
-    "Четверг",
-    "Пятница",
-    "Суббота",
-    "Воскресенье"
-  ];
 
   return (
     <div>
@@ -74,24 +60,12 @@ export const ClassroomsPage = () => {
           value={calendarSelectedDate}
           onChange={event => dispatch(dateSelectHandler(event.target.value))}
         />
-        <div className="input-field col s12 m2">
-          <select
-            defaultValue={classroom}
-            onChange={event =>
-              dispatch(classroomSelectHandler(event.target.value))
-            }
-          >
-            <option value="" disabled>
-              Выберите аудиторию
-            </option>
-            {classrooms.map((elem, index) => (
-              <option key={elem.number + index} value={index}>
-                {elem.number}
-              </option>
-            ))}
-          </select>
-          <label>Выберите Аудиторию</label>
-        </div>
+        <Datalist
+          selectedValue={classroomNum}
+          options={classrooms}
+          text="Выберите аудиторию"
+          name="Classroom"
+        />
         <Link to="/classrooms/all" className="waves-effect waves-light btn">
           Изменить аудитории <i className="material-icons">edit</i>
         </Link>

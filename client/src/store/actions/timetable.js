@@ -1,4 +1,4 @@
-import { TIMETABLE_DELETE_ROW, TIMETABLE_NAMES } from "../types";
+import { TIMETABLE_NAMES } from "../types";
 
 export const timetableNamesHandler = (
   event,
@@ -25,22 +25,6 @@ export const timetableNamesHandler = (
 
   return {
     type: TIMETABLE_NAMES,
-    payload: newGroupsArr
-  };
-};
-
-export const timetableDeleteRow = (
-  lessonindex,
-  dayIndex,
-  selectedGroupIndex,
-  groups
-) => {
-  const newGroupsArr = [...groups];
-  const newTimetableArr = newGroupsArr[selectedGroupIndex].timetable[dayIndex];
-  newTimetableArr.splice(lessonindex, 1);
-  newGroupsArr[selectedGroupIndex].timetable[dayIndex] = newTimetableArr;
-  return {
-    type: TIMETABLE_DELETE_ROW,
     payload: newGroupsArr
   };
 };

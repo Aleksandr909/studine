@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { dateSelectHandler } from "../store/actions/calendar";
 import { Link } from "react-router-dom";
-import { teacherSelectHandler } from "../store/actions/teachers";
+import { days } from "../store/constants";
+import { Datalist } from "../components/Datalist";
+import { dateSelectHandler } from "../store/actions/selectHandler";
 
 export const TeachersPage = () => {
   useEffect(() => {
@@ -12,13 +13,13 @@ export const TeachersPage = () => {
   const calendarSelectedDate = useSelector(
     state => state.app.calendarSelectedDate
   );
-  const teacherIndex = useSelector(state => state.app.selectedTeacher);
+  const teacherName = useSelector(state => state.app.selectedTeacher);
 
   const disciplines = useSelector(state => state.app.disciplines);
   const changes = useSelector(state => state.app.changes);
   const teachers = useSelector(state => state.app.teachers);
 
-  const neededDate = new Date(calendarSelectedDate).getDay();
+  const neededDate = (+new Date(calendarSelectedDate) / 86400000 + 3) % 14;
 
   let selectedTeacherTimetableForDay = [
     { name: "", classroom: "", groupName: "", lessonNum: 1 },
@@ -30,36 +31,18 @@ export const TeachersPage = () => {
     { name: "", classroom: "", groupName: "", lessonNum: 7 },
     { name: "", classroom: "", groupName: "", lessonNum: 8 }
   ];
-  console.log(disciplines[neededDate]);
-
   disciplines[neededDate].forEach(elem => {
-    if (
-      elem.teacher === teachers[teacherIndex].name &&
-      elem.teacher !== undefined
-    ) {
+    if (elem.teacher === teacherName && elem.teacher !== undefined) {
       selectedTeacherTimetableForDay[elem.lessonNum - 1] = elem;
     }
   });
   if (changes[calendarSelectedDate] !== undefined) {
     changes[calendarSelectedDate].forEach(elem => {
-      if (
-        elem.teacher === teachers[teacherIndex].name &&
-        elem.teacher !== undefined
-      ) {
+      if (elem.teacher === teacherName && elem.teacher !== undefined) {
         selectedTeacherTimetableForDay[elem.lessonNum - 1] = elem;
       }
     });
   }
-
-  const days = [
-    "Понедельник",
-    "Вторник",
-    "Среда",
-    "Четверг",
-    "Пятница",
-    "Суббота",
-    "Воскресенье"
-  ];
 
   return (
     <div>
@@ -76,24 +59,12 @@ export const TeachersPage = () => {
           value={calendarSelectedDate}
           onChange={event => dispatch(dateSelectHandler(event.target.value))}
         />
-        <div className="input-field col s12 m2">
-          <select
-            defaultValue={teacherIndex}
-            onChange={event =>
-              dispatch(teacherSelectHandler(event.target.value))
-            }
-          >
-            <option value="" disabled>
-              Выберите аудиторию
-            </option>
-            {teachers.map((elem, index) => (
-              <option key={elem.name + index} value={index}>
-                {elem.name}
-              </option>
-            ))}
-          </select>
-          <label>Выберите Преподавателя</label>
-        </div>
+        <Datalist
+          selectedValue={teacherName}
+          options={teachers}
+          text="Выберите Преподавателя"
+          name="Teacher"
+        />
         <Link to="/teachers/all" className="waves-effect waves-light btn">
           Изменить преподавателей <i className="material-icons">edit</i>
         </Link>

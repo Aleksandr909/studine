@@ -1,14 +1,19 @@
 import React from "react";
 import { handleFileSelect } from "../store/actions/fileWorker";
+import { useDispatch } from "react-redux";
 
 export const HomePage = () => {
+  const dispatch = useDispatch();
   return (
     <div>
       <h6>Работа с расписанием</h6>
       <div className="file-field input-field" style={{ marginRight: 20 }}>
         <div className="waves-effect btn waves-light blue">
           Загрузить <i className="material-icons">cloud_download</i>
-          <input type="file" onChange={event => handleFileSelect(event)} />
+          <input
+            type="file"
+            onChange={event => dispatch(handleFileSelect(event))}
+          />
         </div>
         <div className="file-path-wrapper">
           <input

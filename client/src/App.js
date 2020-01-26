@@ -21,7 +21,6 @@ function App() {
   if (!ready || !localStoreReady) {
     return <Loader />;
   }
-
   return (
     <AuthContext.Provider
       value={{

@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
-  selectHandler,
   discAddRow,
   discNamesHandler,
   discDeleteRow
 } from "../store/actions/disciplines";
 import { groupSave } from "../store/actions/localStorage";
+import { Datalist } from "../components/Datalist";
 
 export const DisciplinesPage = () => {
   const dispatch = useDispatch();
@@ -14,9 +14,11 @@ export const DisciplinesPage = () => {
     window.M.AutoInit();
   });
   const groups = useSelector(state => state.app.groups);
-  const selectedGroupIndex = useSelector(
-    state => state.app.disciplinesSelectedGroup
+  const selectedGroup = useSelector(state => state.app.selectedGroup);
+  let selectedGroupIndex = groups.findIndex(
+    elem => elem.name === selectedGroup
   );
+  selectedGroupIndex = selectedGroupIndex === -1 ? 0 : selectedGroupIndex;
   const selectedGroupValue = groups[selectedGroupIndex];
 
   return (
@@ -26,22 +28,12 @@ export const DisciplinesPage = () => {
         необходимо ввести список дисциплин у каждой группы. Дисциплины могут
         автоматически добавляться после добавления расписания.
       </h6>
-      <div className="input-field col s12">
-        <select
-          defaultValue="0"
-          onChange={event => dispatch(selectHandler(event.target.value))}
-        >
-          <option value="" disabled>
-            Выберите группу
-          </option>
-          {groups.map((elem, index) => (
-            <option key={elem.name + index} value={index}>
-              {elem.name}
-            </option>
-          ))}
-        </select>
-        <label>Выберите группу</label>
-      </div>
+      <Datalist
+        selectedValue={selectedGroupValue.name}
+        options={groups}
+        text="Выберите группу"
+        name="Group"
+      />
       <div>
         <p>Дисциплины</p>
         <table>

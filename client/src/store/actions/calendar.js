@@ -1,23 +1,4 @@
-import {
-  CALENDAR_SELECT_HANDLER,
-  CALENDAR_DELETE_ROW,
-  CALENDAR_NAMES,
-  DISCIPLINE_SELECT_HANDLER
-} from "../types";
-
-export const dateSelectHandler = date => {
-  return {
-    type: CALENDAR_SELECT_HANDLER,
-    payload: date
-  };
-};
-
-export const disciplineSelectHandler = discipline => {
-  return {
-    type: DISCIPLINE_SELECT_HANDLER,
-    payload: discipline
-  };
-};
+import { CALENDAR_NAMES } from "../types";
 
 export const calendarNamesHandler = (
   event,
@@ -26,7 +7,7 @@ export const calendarNamesHandler = (
   calendarSelectedDate,
   groups
 ) => {
-  const dayOfWeek = new Date(calendarSelectedDate).getDay();
+  const dayOfWeek = (+new Date(calendarSelectedDate) / 86400000 + 3) % 14;
   let newGroupsArr = [...groups];
   const name = event.target["name"];
   let groupAllChanges = newGroupsArr[selectedGroupIndex].changes;
@@ -64,39 +45,9 @@ export const calendarNamesHandler = (
   newGroupsArr[selectedGroupIndex].changes[calendarSelectedDate][
     lessonIndex
   ] = selectedInputInState;
-  console.log(newGroupsArr);
 
   return {
     type: CALENDAR_NAMES,
-    payload: newGroupsArr
-  };
-};
-
-export const calendarDeleteRow = (
-  groups,
-  calendarSelectedDate,
-  selectedGroupIndex,
-  lessonIndex
-) => {
-  const newGroupsArr = [...groups];
-  const dayOfWeek = new Date(calendarSelectedDate).getDay();
-  let groupAllChanges = newGroupsArr[selectedGroupIndex].changes;
-  groupAllChanges =
-    groupAllChanges[calendarSelectedDate] === undefined
-      ? {
-          ...groupAllChanges,
-          [calendarSelectedDate]:
-            newGroupsArr[selectedGroupIndex].timetable[dayOfWeek]
-        }
-      : groupAllChanges;
-
-  newGroupsArr[selectedGroupIndex].changes = groupAllChanges;
-  newGroupsArr[selectedGroupIndex].changes[calendarSelectedDate].splice(
-    lessonIndex,
-    1
-  );
-  return {
-    type: CALENDAR_DELETE_ROW,
     payload: newGroupsArr
   };
 };

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import "materialize-css/dist/css/materialize.min.css";
@@ -6,6 +6,7 @@ import "materialize-css/dist/css/materialize.min.css";
 export const Navbar = () => {
   const history = useHistory();
   const auth = useContext(AuthContext);
+  const [isFullScreen, SetIsFullScreen] = useState(null);
 
   const logoutHandler = event => {
     event.preventDefault();
@@ -23,6 +24,34 @@ export const Navbar = () => {
       instance.close();
     });
   });
+  document.addEventListener("fullscreenchange", event => {
+    if (document.fullscreenElement) {
+      SetIsFullScreen(true);
+    } else {
+      SetIsFullScreen(false);
+    }
+  });
+  function fullScreen(element) {
+    if (!isFullScreen) {
+      if (element.requestFullscreen) {
+        element.requestFullscreen();
+      } else if (element.webkitrequestFullscreen) {
+        element.webkitRequestFullscreen();
+      } else if (element.mozRequestFullscreen) {
+        element.mozRequestFullScreen();
+      }
+    } else {
+      if (element.requestFullscreen) {
+        document.exitFullscreen();
+      } else if (element.webkitrequestFullscreen) {
+        document.exitFullscreen();
+      } else if (element.mozRequestFullscreen) {
+        document.exitFullscreen();
+      }
+    }
+  }
+
+  var html = document.documentElement;
 
   return (
     <div>
@@ -100,12 +129,25 @@ export const Navbar = () => {
       </ul>
       <div className="navbar-fixed">
         <nav className="blue darken-1">
-          <button
-            data-target="slide-out"
-            className="waves-effect waves-light sidenav-trigger btn blue darken-4"
+          <div className="waves-effect waves-light ">
+            <i
+              data-target="slide-out"
+              className="material-icons btn-flat sidenav-trigger"
+            >
+              menu
+            </i>
+          </div>
+
+          <div
+            className="waves-effect waves-light "
+            onClick={() => {
+              fullScreen(html);
+            }}
           >
-            <i className="material-icons">menu</i>
-          </button>
+            <i className="material-icons btn-flat ">
+              {!isFullScreen ? "fullscreen" : "fullscreen_exit"}
+            </i>
+          </div>
         </nav>
       </div>
     </div>
