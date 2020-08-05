@@ -1,6 +1,6 @@
 # studine
 
-### Админ панель на react для [приложения](https://github.com/Aleksandr909/UniverCityA).
+### Админ панель на react для [приложения](https://play.google.com/store/apps/details?id=com.univercitya&hl=ru).
 
 **Дизайн** - [figma](https://www.figma.com/proto/vXLzdi4NuE5qjWvhTMcrCU/Untitled?scaling=min-zoom&node-id=1%3A3)
 
